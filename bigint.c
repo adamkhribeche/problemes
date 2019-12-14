@@ -6,7 +6,7 @@
 /*   By: nkhribec <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/13 22:39:33 by nkhribec          #+#    #+#             */
-/*   Updated: 2019/12/14 15:29:38 by nkhribec         ###   ########.fr       */
+/*   Updated: 2019/12/14 15:43:43 by nkhribec         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,18 +56,22 @@ t_big somme(t_big a, t_big b)
 	int maxsize;
 	int i;
 
-	//result = malloc(sizeof(*result));
 	i = 0;
 	carry = 0;
 	maxsize = max(a.size, b.size);
+	printbig(a);
+	printbig(b);
 	while (i < 8 && maxsize--)
 	{
+		printf("----------\n");
 		som = a.tab[i] + b.tab[i] + carry;
 		carry = som >> 32;
 		result.tab[i] = som & 0xffffffff;
 		result.size++;
 		i++;
 	}
+	printbig(result);
+	exit (0);
 	result.tab[i] = carry;
 	if (carry != 0)
 		result.size++;
@@ -101,7 +105,6 @@ t_big	get_big(int fd)
 	int		len;
 	
 	i = -1;
-	//result = malloc(sizeof(*result));
 	ft_bzero(&result, sizeof(t_big));
 	result.size = 0;
 	get_next_line(fd, &s);
@@ -112,9 +115,7 @@ t_big	get_big(int fd)
 		result.tab[i] = ft_atoi(tmp);
 		result.size++;
 	}
-	printbig(result);
 	bigindian(&result);
-	printbig(result);
 	ft_strdel(&tmp);
 	ft_strdel(&s);
 	return (result);
@@ -123,6 +124,7 @@ t_big	get_big(int fd)
 t_big	get_result(int fd)
 {
 	t_big	a;
+	t_big	b;
 	t_big	result;
 	int		i;
 	
@@ -131,7 +133,9 @@ t_big	get_result(int fd)
 	while (++i < 100)
 	{
 		a = get_big(fd);
-		result = somme(result, a);
+		b = get_big(fd);
+		//result = somme(result, a);
+		result = somme(a, b);
 	}
 	printbig(result);
 	return (result);
@@ -141,6 +145,7 @@ int main(int ac, char **av)
 {
 	int		fd;
 	t_big	a;
+	int i = 5;
 
 	fd = open(av[1], O_RDONLY);
 	if (fd < 0)
@@ -148,10 +153,13 @@ int main(int ac, char **av)
 		perror("");
 		return (0);
 	}
-	//a = get_result(fd);
+	a = get_result(fd);
 	//b = get_result(fd);*/
-	
-	a = get_big(fd);
+	/*while (i--)
+	{
+		a = get_big(fd);
+		printbig(a);
+	}*/
 	//b = get_big(fd);
 	//printf("%d\n", a->tab[0]);
 	//printf("%d\n", b->tab[0]);
